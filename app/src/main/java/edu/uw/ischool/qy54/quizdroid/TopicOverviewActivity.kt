@@ -24,7 +24,7 @@ class TopicOverviewActivity : AppCompatActivity() {
 
         tvTopicName.text = selectedTopicKey
         tvTopicDescription.text = TopicManager.topics[selectedTopicKey]?.description
-        tvTotalQuestions.text = "Total questions: ${selectedTopicQuestions?.size}"
+        tvTotalQuestions.text = getString(R.string.total_questions_text, selectedTopicQuestions?.size ?: 0)
 
         btnBegin.setOnClickListener {
             val intent = Intent(this, QuestionActivity::class.java)
