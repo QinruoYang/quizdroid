@@ -32,6 +32,7 @@ class TopicOverviewActivity : AppCompatActivity() {
             intent.putExtra("questionIndex", 0)
             intent.putExtra("correctCount", 0)
             startActivity(intent)
+            finish()
         }
     }
 }

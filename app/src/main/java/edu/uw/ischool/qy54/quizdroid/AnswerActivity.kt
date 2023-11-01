@@ -58,4 +58,14 @@ class AnswerActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onBackPressed() {
+            val intent = Intent(this, QuestionActivity::class.java)
+            intent.putExtra("selectedTopic", selectedTopicKey)
+            intent.putExtra("questionIndex", questionIndex)
+            intent.putExtra("correctCount", correctCount)
+            startActivity(intent)
+            finish()
+    }
+
 }

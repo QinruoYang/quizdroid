@@ -68,4 +68,18 @@ class QuestionActivity : AppCompatActivity() {
             finish()
         }
     }
+
+    override fun onBackPressed() {
+        if (questionIndex > 0) {
+            val intent = Intent(this, QuestionActivity::class.java)
+            intent.putExtra("selectedTopic", selectedTopicKey)
+            intent.putExtra("questionIndex", questionIndex - 1)
+            intent.putExtra("correctCount", correctCount - 1)
+            startActivity(intent)
+            finish()
+        } else {
+            // Navigate to the topic list page if it's the first question.
+            super.onBackPressed()
+        }
+    }
 }
