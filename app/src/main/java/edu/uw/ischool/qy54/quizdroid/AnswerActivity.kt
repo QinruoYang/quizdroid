@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-
+import androidx.activity.addCallback
 class AnswerActivity : AppCompatActivity() {
 
     private var selectedTopicKey: String? = null
@@ -27,20 +27,28 @@ class AnswerActivity : AppCompatActivity() {
         val btnNextOrFinish: Button = findViewById(R.id.btnNextOrFinish)
 
         val question = TopicManager.topics[selectedTopicKey]?.questions?.get(questionIndex)
-        val correctAnswer = question?.options?.get(question?.correctAnswerIndex ?: -1)
 
-        when (selectedOption) {
-            R.id.radioButton1 -> tvYourAnswer.text = "Your answer: ${question?.options?.get(0)}"
-            R.id.radioButton2 -> tvYourAnswer.text = "Your answer: ${question?.options?.get(1)}"
-            R.id.radioButton3 -> tvYourAnswer.text = "Your answer: ${question?.options?.get(2)}"
-            R.id.radioButton4 -> tvYourAnswer.text = "Your answer: ${question?.options?.get(3)}"
+        val correctAnswerIndex = question?.correctAnswerIndex ?: -1
+        val correctAnswer = if (question != null && correctAnswerIndex >= 0) {
+            question.options[correctAnswerIndex]
+        } else {
+            null
         }
 
-        tvCorrectAnswer.text = "Correct answer: $correctAnswer"
-        tvScore.text = "You have $correctCount out of ${questionIndex + 1} correct"
+        val selectedOptionIndex = when (selectedOption) {
+            R.id.radioButton1 -> 0
+            R.id.radioButton2 -> 1
+            R.id.radioButton3 -> 2
+            R.id.radioButton4 -> 3
+            else -> -1
+        }
 
-        if (questionIndex + 1 < TopicManager.topics[selectedTopicKey]?.questions?.size ?: 0) {
-            btnNextOrFinish.text = "Next"
+        tvYourAnswer.text = getString(R.string.your_answer, question?.options?.get(selectedOptionIndex))
+        tvCorrectAnswer.text = getString(R.string.correct_answer, correctAnswer)
+        tvScore.text = getString(R.string.score_count, correctCount, questionIndex + 1)
+
+        if ((questionIndex + 1) < (TopicManager.topics[selectedTopicKey]?.questions?.size ?: 0)) {
+            btnNextOrFinish.text = getString(R.string.btn_next)
             btnNextOrFinish.setOnClickListener {
                 val intent = Intent(this, QuestionActivity::class.java)
                 intent.putExtra("selectedTopic", selectedTopicKey)
@@ -50,22 +58,26 @@ class AnswerActivity : AppCompatActivity() {
                 finish()
             }
         } else {
-            btnNextOrFinish.text = "Finish"
+            btnNextOrFinish.text = getString(R.string.btn_finish)
             btnNextOrFinish.setOnClickListener {
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 finish()
             }
         }
+
+
+        handleBackPressedLogic()
     }
 
-    override fun onBackPressed() {
-            val intent = Intent(this, QuestionActivity::class.java)
+    private fun handleBackPressedLogic() {
+        onBackPressedDispatcher.addCallback(this) {
+            val intent = Intent(this@AnswerActivity, QuestionActivity::class.java)
             intent.putExtra("selectedTopic", selectedTopicKey)
             intent.putExtra("questionIndex", questionIndex)
             intent.putExtra("correctCount", correctCount)
             startActivity(intent)
             finish()
+        }
     }
-
 }

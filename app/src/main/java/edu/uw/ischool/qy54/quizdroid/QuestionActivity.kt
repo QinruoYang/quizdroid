@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 
 class QuestionActivity : AppCompatActivity() {
@@ -67,19 +68,19 @@ class QuestionActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+        handleBackPressedLogic()
     }
 
-    override fun onBackPressed() {
+    private fun handleBackPressedLogic() {
         if (questionIndex > 0) {
-            val intent = Intent(this, QuestionActivity::class.java)
-            intent.putExtra("selectedTopic", selectedTopicKey)
-            intent.putExtra("questionIndex", questionIndex - 1)
-            intent.putExtra("correctCount", correctCount - 1)
-            startActivity(intent)
-            finish()
-        } else {
-            // Navigate to the topic list page if it's the first question.
-            super.onBackPressed()
+            onBackPressedDispatcher.addCallback(this) {
+                val intent = Intent(this@QuestionActivity, QuestionActivity::class.java)
+                intent.putExtra("selectedTopic", selectedTopicKey)
+                intent.putExtra("questionIndex", questionIndex - 1)
+                intent.putExtra("correctCount", correctCount - 1)
+                startActivity(intent)
+                finish()
+            }
         }
     }
 }
