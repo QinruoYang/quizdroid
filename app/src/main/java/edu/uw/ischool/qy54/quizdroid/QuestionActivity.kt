@@ -24,7 +24,8 @@ class QuestionActivity : AppCompatActivity() {
         questionIndex = intent.getIntExtra("questionIndex", 0)
         correctCount = intent.getIntExtra("correctCount", 0)
 
-        val question = TopicManager.topics[selectedTopicKey]?.questions?.get(questionIndex)
+        val topic = selectedTopicKey?.let { QuizApp.repository.getTopicByName(it) }
+        val quiz = topic?.quizzes?.get(questionIndex)
 
         val tvQuestion: TextView = findViewById(R.id.tvQuestion)
         val radioGroup: RadioGroup = findViewById(R.id.radioGroup)
@@ -34,51 +35,51 @@ class QuestionActivity : AppCompatActivity() {
         val radioButton4: RadioButton = findViewById(R.id.radioButton4)
         val btnSubmit: Button = findViewById(R.id.btnSubmit)
 
-        tvQuestion.text = question?.text
-        radioButton1.text = question?.options?.get(0)
-        radioButton2.text = question?.options?.get(1)
-        radioButton3.text = question?.options?.get(2)
-        radioButton4.text = question?.options?.get(3)
+        tvQuestion.text = quiz?.text
+        radioButton1.text = quiz?.answers?.getOrNull(0)
+        radioButton2.text = quiz?.answers?.getOrNull(1)
+        radioButton3.text = quiz?.answers?.getOrNull(2)
+        radioButton4.text = quiz?.answers?.getOrNull(3)
 
         radioGroup.setOnCheckedChangeListener { _, _ ->
             btnSubmit.visibility = View.VISIBLE
         }
 
         btnSubmit.setOnClickListener {
-            val selectedOption = radioGroup.checkedRadioButtonId
-            val correctAnswerIndex = question?.correctAnswerIndex ?: -1
-
-            var isAnswerCorrect = false
-            when (selectedOption) {
-                R.id.radioButton1 -> isAnswerCorrect = (correctAnswerIndex == 0)
-                R.id.radioButton2 -> isAnswerCorrect = (correctAnswerIndex == 1)
-                R.id.radioButton3 -> isAnswerCorrect = (correctAnswerIndex == 2)
-                R.id.radioButton4 -> isAnswerCorrect = (correctAnswerIndex == 3)
+            val selectedOptionIndex = when (radioGroup.checkedRadioButtonId) {
+                R.id.radioButton1 -> 0
+                R.id.radioButton2 -> 1
+                R.id.radioButton3 -> 2
+                R.id.radioButton4 -> 3
+                else -> -1
             }
 
-            if (isAnswerCorrect) {
-                correctCount++
+            val intent = Intent(this, AnswerActivity::class.java).apply {
+                putExtra("selectedTopic", selectedTopicKey)
+                putExtra("questionIndex", questionIndex)
+                putExtra("selectedOption", selectedOptionIndex)
+                putExtra("correctCount", if (quiz?.correctAnswerIndex == selectedOptionIndex) correctCount + 1 else correctCount)
             }
-
-            val intent = Intent(this, AnswerActivity::class.java)
-            intent.putExtra("selectedTopic", selectedTopicKey)
-            intent.putExtra("questionIndex", questionIndex)
-            intent.putExtra("selectedOption", selectedOption)
-            intent.putExtra("correctCount", correctCount)
             startActivity(intent)
             finish()
         }
+
         handleBackPressedLogic()
     }
 
     private fun handleBackPressedLogic() {
-        if (questionIndex > 0) {
-            onBackPressedDispatcher.addCallback(this) {
-                val intent = Intent(this@QuestionActivity, QuestionActivity::class.java)
-                intent.putExtra("selectedTopic", selectedTopicKey)
-                intent.putExtra("questionIndex", questionIndex - 1)
-                intent.putExtra("correctCount", correctCount - 1)
+        onBackPressedDispatcher.addCallback(this) {
+            if (questionIndex > 0) {
+                val previousQuestionIndex = questionIndex - 1
+                val intent = Intent(this@QuestionActivity, QuestionActivity::class.java).apply {
+                    putExtra("selectedTopic", selectedTopicKey)
+                    putExtra("questionIndex", previousQuestionIndex)
+                    putExtra("correctCount", correctCount)
+                    // Still need to check whether the previous question was answered correctly or not
+                }
                 startActivity(intent)
+                finish()
+            } else {
                 finish()
             }
         }

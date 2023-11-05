@@ -15,16 +15,17 @@ class TopicOverviewActivity : AppCompatActivity() {
         setContentView(R.layout.activity_topic_overview)
 
         selectedTopicKey = intent.getStringExtra("selectedTopic")
-        val selectedTopicQuestions = TopicManager.topics[selectedTopicKey]?.questions
+        val selectedTopic = selectedTopicKey?.let { QuizApp.repository.getTopicByName(it) }
 
         val tvTopicName: TextView = findViewById(R.id.tvTopicName)
         val tvTopicDescription: TextView = findViewById(R.id.tvTopicDescription)
         val tvTotalQuestions: TextView = findViewById(R.id.tvTotalQuestions)
         val btnBegin: Button = findViewById(R.id.btnBegin)
 
-        tvTopicName.text = selectedTopicKey
-        tvTopicDescription.text = TopicManager.topics[selectedTopicKey]?.description
-        tvTotalQuestions.text = getString(R.string.total_questions_text, selectedTopicQuestions?.size ?: 0)
+        // Set the text views and button based on the selected topic
+        tvTopicName.text = selectedTopic?.title
+        tvTopicDescription.text = selectedTopic?.longDescription
+        tvTotalQuestions.text = getString(R.string.total_questions_text, selectedTopic?.quizzes?.size ?: 0)
 
         btnBegin.setOnClickListener {
             val intent = Intent(this, QuestionActivity::class.java)

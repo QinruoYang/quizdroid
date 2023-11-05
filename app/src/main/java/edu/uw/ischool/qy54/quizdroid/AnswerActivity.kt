@@ -26,58 +26,48 @@ class AnswerActivity : AppCompatActivity() {
         val tvScore: TextView = findViewById(R.id.tvScore)
         val btnNextOrFinish: Button = findViewById(R.id.btnNextOrFinish)
 
-        val question = TopicManager.topics[selectedTopicKey]?.questions?.get(questionIndex)
+        val topic = selectedTopicKey?.let { QuizApp.repository.getTopicByName(it) }
+        val quiz = topic?.quizzes?.get(questionIndex)
 
-        val correctAnswerIndex = question?.correctAnswerIndex ?: -1
-        val correctAnswer = if (question != null && correctAnswerIndex >= 0) {
-            question.options[correctAnswerIndex]
-        } else {
-            null
-        }
+        val correctAnswerIndex = quiz?.correctAnswerIndex ?: -1
+        val correctAnswer = quiz?.answers?.get(correctAnswerIndex)
 
-        val selectedOptionIndex = when (selectedOption) {
-            R.id.radioButton1 -> 0
-            R.id.radioButton2 -> 1
-            R.id.radioButton3 -> 2
-            R.id.radioButton4 -> 3
-            else -> -1
-        }
-
-        tvYourAnswer.text = getString(R.string.your_answer, question?.options?.get(selectedOptionIndex))
+        tvYourAnswer.text = getString(R.string.your_answer, quiz?.answers?.get(selectedOption))
         tvCorrectAnswer.text = getString(R.string.correct_answer, correctAnswer)
         tvScore.text = getString(R.string.score_count, correctCount, questionIndex + 1)
 
-        if ((questionIndex + 1) < (TopicManager.topics[selectedTopicKey]?.questions?.size ?: 0)) {
+        // Define the text and action for the button based on whether there are more questions left
+        if ((questionIndex + 1) < (topic?.quizzes?.size ?: 0)) {
             btnNextOrFinish.text = getString(R.string.btn_next)
             btnNextOrFinish.setOnClickListener {
-                val intent = Intent(this, QuestionActivity::class.java)
-                intent.putExtra("selectedTopic", selectedTopicKey)
-                intent.putExtra("questionIndex", questionIndex + 1)
-                intent.putExtra("correctCount", correctCount)
+                val intent = Intent(this, QuestionActivity::class.java).apply {
+                    putExtra("selectedTopic", selectedTopicKey)
+                    putExtra("questionIndex", questionIndex + 1)
+                    putExtra("correctCount", correctCount)
+                }
                 startActivity(intent)
                 finish()
             }
         } else {
             btnNextOrFinish.text = getString(R.string.btn_finish)
             btnNextOrFinish.setOnClickListener {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
                 finish()
             }
         }
-
 
         handleBackPressedLogic()
     }
 
     private fun handleBackPressedLogic() {
         onBackPressedDispatcher.addCallback(this) {
-            val intent = Intent(this@AnswerActivity, QuestionActivity::class.java)
-            intent.putExtra("selectedTopic", selectedTopicKey)
-            intent.putExtra("questionIndex", questionIndex)
-            intent.putExtra("correctCount", correctCount)
+            val intent = Intent(this@AnswerActivity, QuestionActivity::class.java).apply {
+                putExtra("selectedTopic", selectedTopicKey)
+                putExtra("questionIndex", questionIndex)
+                putExtra("correctCount", correctCount)
+            }
             startActivity(intent)
             finish()
         }
     }
 }
+
