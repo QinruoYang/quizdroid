@@ -3,7 +3,7 @@ package edu.uw.ischool.qy54.quizdroid
 
 class InMemoryTopicRepository : TopicRepository {
 
-    private val topics = listOf(
+    private val topics = mutableListOf(
         Topic(
             title = "Math",
             shortDescription = "Questions related to mathematics.",
@@ -39,4 +39,8 @@ class InMemoryTopicRepository : TopicRepository {
     override fun getAllTopics(): List<Topic> = topics
 
     override fun getTopicByName(name: String): Topic? = topics.find { it.title == name }
+
+    override fun addTopic(topic: Topic) {
+        topics.add(topic)
+    }
 }
