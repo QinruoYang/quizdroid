@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity() {
 
         val topicsListView: ListView = findViewById(R.id.topicListView)
 
+
+
         lifecycleScope.launch {
             // Fetch topics asynchronously
             QuizApp.repository.fetchTopics()

@@ -22,7 +22,9 @@ class InMemoryTopicRepository(private val context: Context) : TopicRepository {
         val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
         val url = sharedPreferences.getString("URL", "defaultURL")
         val downloadFrequency = sharedPreferences.getInt("DownloadFrequency", 60)
-        val file = File(context.externalCacheDir, "questions.json")
+
+        val file = File(context.filesDir, "questions.json")
+
         if (file.exists()) {
             val jsonString = file.readText(Charsets.UTF_8)
             val jsonArray = JSONArray(jsonString)
@@ -48,6 +50,7 @@ class InMemoryTopicRepository(private val context: Context) : TopicRepository {
                         answers.add(jsonAnswers.getString(k))
                     }
 
+                    // Adjust the answerIndex to match the array indexing in Kotlin (0-based)
                     quizzes.add(Quiz(text, answers, answerIndex))
                 }
 
@@ -57,7 +60,7 @@ class InMemoryTopicRepository(private val context: Context) : TopicRepository {
             topics.clear()
             topics.addAll(newTopics)
         } else {
-            Log.e("InMemoryTopicRepository", "Error: questions.json file not found in externalCacheDir")
+            Log.e("InMemoryTopicRepository", "Error: questions.json file not found in internal storage")
         }
     }
 }

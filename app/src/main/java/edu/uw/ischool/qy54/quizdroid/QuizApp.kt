@@ -12,6 +12,7 @@ class QuizApp : Application() {
     override fun onCreate() {
         super.onCreate()
         repository = InMemoryTopicRepository(this)
+        Log.i("QuizApp", "fileDir=$filesDir" )
         Log.d("QuizApp", "QuizApp is running!")
     }
 }
