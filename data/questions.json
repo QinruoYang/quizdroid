@@ -1,0 +1,80 @@
+[
+  {
+      "title": "World Geography",
+      "desc": "Explore the world with these geography questions!",
+      "questions": [
+          {
+              "text": "What is the largest country by area?",
+              "answer": "1",
+              "answers": [
+                  "China",
+                  "Russia",
+                  "Canada",
+                  "United States"
+              ]
+          },
+          {
+              "text": "Which river is the longest in the world?",
+              "answer": "2",
+              "answers": [
+                  "Amazon River",
+                  "Nile River",
+                  "Yangtze River",
+                  "Mississippi River"
+              ]
+          }
+      ]
+  },
+  {
+      "title": "Classic Literature",
+      "desc": "Dive into the world of classic novels and plays!",
+      "questions": [
+          {
+              "text": "Who wrote 'Pride and Prejudice'?",
+              "answer": "2",
+              "answers": [
+                  "Charlotte Brontë",
+                  "Jane Austen",
+                  "Emily Dickinson",
+                  "Louisa May Alcott"
+              ]
+          },
+          {
+              "text": "Which Shakespeare play features the character of Othello?",
+              "answer": "1",
+              "answers": [
+                  "Othello",
+                  "Hamlet",
+                  "Macbeth",
+                  "Romeo and Juliet"
+              ]
+          }
+      ]
+  },
+  {
+      "title": "Famous Scientists",
+      "desc": "Test your knowledge about legendary figures in science!",
+      "questions": [
+          {
+              "text": "Who proposed the theory of relativity?",
+              "answer": "2",
+              "answers": [
+                  "Isaac Newton",
+                  "Albert Einstein",
+                  "Stephen Hawking",
+                  "Marie Curie"
+              ]
+          },
+          {
+              "text": "Who discovered penicillin?",
+              "answer": "1",
+              "answers": [
+                  "Alexander Fleming",
+                  "Louis Pasteur",
+                  "Gregor Mendel",
+                  "Charles Darwin"
+              ]
+          }
+      ]
+  }
+]
