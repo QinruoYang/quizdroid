@@ -58,7 +58,7 @@ class QuestionActivity : AppCompatActivity() {
                 putExtra("selectedTopic", selectedTopicKey)
                 putExtra("questionIndex", questionIndex)
                 putExtra("selectedOption", selectedOptionIndex)
-                putExtra("correctCount", if (quiz?.correctAnswerIndex == selectedOptionIndex) correctCount + 1 else correctCount)
+                putExtra("correctCount", if (quiz?.correctAnswerIndex?.minus(1) == selectedOptionIndex) correctCount + 1 else correctCount)
             }
             startActivity(intent)
             finish()

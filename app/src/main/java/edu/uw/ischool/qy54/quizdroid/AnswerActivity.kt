@@ -29,8 +29,8 @@ class AnswerActivity : AppCompatActivity() {
         val topic = selectedTopicKey?.let { QuizApp.repository.getTopicByName(it) }
         val quiz = topic?.quizzes?.get(questionIndex)
 
-        val correctAnswerIndex = quiz?.correctAnswerIndex ?: -1
-        val correctAnswer = quiz?.answers?.get(correctAnswerIndex)
+        val correctAnswerIndex = quiz?.correctAnswerIndex?.minus(1) ?: -1
+        val correctAnswer = quiz?.answers?.getOrNull(correctAnswerIndex)
 
         tvYourAnswer.text = getString(R.string.your_answer, quiz?.answers?.get(selectedOption))
         tvCorrectAnswer.text = getString(R.string.correct_answer, correctAnswer)
