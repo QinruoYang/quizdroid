@@ -3,6 +3,7 @@ package edu.uw.ischool.qy54.quizdroid
 import android.content.Context
 import android.util.Log
 import org.json.JSONArray
+import org.json.JSONException
 import java.io.File
 
 
@@ -26,39 +27,43 @@ class InMemoryTopicRepository(private val context: Context) : TopicRepository {
         val file = File(context.filesDir, "questions.json")
 
         if (file.exists()) {
-            val jsonString = file.readText(Charsets.UTF_8)
-            val jsonArray = JSONArray(jsonString)
+            try{
+                val jsonString = file.readText(Charsets.UTF_8)
+                val jsonArray = JSONArray(jsonString)
+                val newTopics = mutableListOf<Topic>()
 
-            val newTopics = mutableListOf<Topic>()
-            for (i in 0 until jsonArray.length()) {
-                val jsonTopic = jsonArray.getJSONObject(i)
-                val title = jsonTopic.getString("title")
-                val shortDescription = jsonTopic.getString("desc")
-                val longDescription = "" // Assuming long description is not in your JSON
+                for (i in 0 until jsonArray.length()) {
+                    val jsonTopic = jsonArray.getJSONObject(i)
+                    val title = jsonTopic.getString("title")
+                    val shortDescription = jsonTopic.getString("desc")
+                    val longDescription = "" // Assuming long description is not in your JSON
 
-                val jsonQuestions = jsonTopic.getJSONArray("questions")
-                val quizzes = mutableListOf<Quiz>()
+                    val jsonQuestions = jsonTopic.getJSONArray("questions")
+                    val quizzes = mutableListOf<Quiz>()
 
-                for (j in 0 until jsonQuestions.length()) {
-                    val jsonQuestion = jsonQuestions.getJSONObject(j)
-                    val text = jsonQuestion.getString("text")
-                    val answerIndex = jsonQuestion.getInt("answer")
-                    val answers = mutableListOf<String>()
+                    for (j in 0 until jsonQuestions.length()) {
+                        val jsonQuestion = jsonQuestions.getJSONObject(j)
+                        val text = jsonQuestion.getString("text")
+                        val answerIndex = jsonQuestion.getInt("answer")
+                        val answers = mutableListOf<String>()
 
-                    val jsonAnswers = jsonQuestion.getJSONArray("answers")
-                    for (k in 0 until jsonAnswers.length()) {
-                        answers.add(jsonAnswers.getString(k))
+                        val jsonAnswers = jsonQuestion.getJSONArray("answers")
+                        for (k in 0 until jsonAnswers.length()) {
+                            answers.add(jsonAnswers.getString(k))
+                        }
+
+                        // Adjust the answerIndex to match the array indexing in Kotlin (0-based)
+                        quizzes.add(Quiz(text, answers, answerIndex))
                     }
 
-                    // Adjust the answerIndex to match the array indexing in Kotlin (0-based)
-                    quizzes.add(Quiz(text, answers, answerIndex))
+                    newTopics.add(Topic(title, shortDescription, longDescription, quizzes))
                 }
 
-                newTopics.add(Topic(title, shortDescription, longDescription, quizzes))
+                topics.clear()
+                topics.addAll(newTopics)
+            } catch (e: JSONException) {
+                Log.e("InMemoryTopicRepository", "JSON parsing error: ${e.message}")
             }
-
-            topics.clear()
-            topics.addAll(newTopics)
         } else {
             Log.e("InMemoryTopicRepository", "Error: questions.json file not found in internal storage")
         }
