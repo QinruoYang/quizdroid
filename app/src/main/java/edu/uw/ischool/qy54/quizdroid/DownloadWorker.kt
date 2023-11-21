@@ -25,7 +25,6 @@ class DownloadWorker(context: Context, params: WorkerParameters) : CoroutineWork
             applicationContext.sendBroadcast(Intent("DOWNLOAD_ATTEMPT"))
 
             if (!isNetworkAvailable() || isAirplaneModeOn()) {
-                // Can send a local broadcast to inform the UI about network status
                 return@withContext Result.retry()
             }
 
